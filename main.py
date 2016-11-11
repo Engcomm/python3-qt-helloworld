@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+import argparse
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QAction, QPushButton, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QPushButton, QWidget
 from PyQt5.QtGui import QIcon
+# from PyQt5.QtWidgets import QTextEdit
 
 
 class ButtonWidget(QWidget):
@@ -32,8 +34,8 @@ class Example(QMainWindow):
         self.setWindowTitle('Hello World')
         self.setWindowIcon(QIcon('blocks.png'))
 
-        #text_edit_widget = QTextEdit()
-        #self.setCentralWidget(text_edit_widget)
+        # text_edit_widget = QTextEdit()
+        # self.setCentralWidget(text_edit_widget)
 
         button_widget = ButtonWidget(self)
         self.setCentralWidget(button_widget)
@@ -55,7 +57,33 @@ class Example(QMainWindow):
         self.show()
 
 
+def process_cl_args():
+    # Source: http://stackoverflow.com/questions/11713006/elegant-command-line-argument-parsing-for-pyqt
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--swallow', action='store')  # optional flag
+    parser.add_argument('-t', '--top', action='store')  # optional flag
+    parser.add_argument('holy_hand_grenade', action='store')  # positional argument
+
+    parsed, unparsed = parser.parse_known_args()
+    return parsed, unparsed
+
+
 if __name__ == '__main__':
-    app = QApplication(sys.argv)  # pass optional command line arguments through
+    if len(sys.argv) > 1:
+        parsed_args, unparsed_args = process_cl_args()
+    else:
+        parsed_args = None
+        unparsed_args = []
+    qt_args = sys.argv[:1] + unparsed_args
+
+    print(parsed_args)  # Namespace(holy_hand_grenade='True', swallow='opt2', top=None)
+    print(unparsed_args)  # ['something_else']
+
+    app = QApplication(qt_args)  # QApplication expects the first argument to be the program name
     ex = Example()
-    sys.exit(app.exec_())
+    exit_code = app.exec_()
+    sys.exit(exit_code)
+
+# Command:
+# C:\Python34\python.exe main.py True -s opt2 something_else
+# C:\Python35\python.exe main.py True -s opt2 something_else
