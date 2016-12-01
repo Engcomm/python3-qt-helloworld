@@ -40,6 +40,16 @@
 - Nothing else is required
 - Also see http://stackoverflow.com/a/38404201
 
-## Linux
+## Debian Linux
 
-TODO
+#### Python
+- Should already be installed: `which python3`
+- `pip` however might not be: `sudo apt-get install python3-pip`
+- Then update `pip` to the latest version: `sudo pip3 install --upgrade pip`
+
+#### PyQt5
+- `pip install pyqt5` for use or `sudo pip install pyqt5` for system wide installation of module
+
+### Notes
+- Running `python main.py` will not work because the installed 2.x version is used, and this lacks the `pyqt5` module
+- Run `python3 main.py` instead
