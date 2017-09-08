@@ -15,10 +15,32 @@ class ButtonWidget(QWidget):
         self.init_ui()
 
     def init_ui(self):
+        self.setAcceptDrops(True)
+
         btn = QPushButton('Click', self)
         btn.resize(btn.sizeHint())
         btn.move(10, 20)
         btn.clicked.connect(self.print_something)
+
+    def dragEnterEvent(self, e):
+        if e.mimeData().hasFormat('FileName'):
+            self.parent.statusBar().showMessage('Ready to drop ...')
+            e.accept()
+        else:
+            self.parent.statusBar().showMessage('Unsupported object ...')
+            e.ignore()
+
+    def dragLeaveEvent(self, e):
+        # Doesn't fire on leave of ignored object, so the "unsupported object" message never disappears. Workaround?
+        self.parent.statusBar().showMessage('')
+
+    def dragMoveEvent(self, e):
+        # Not really useful when using drag and drop with files/folders.
+        pass
+
+    def dropEvent(self, e):
+        self.parent.statusBar().showMessage('Dropped')
+        print(e.mimeData().text())
 
     def print_something(self):
         self.parent.statusBar().showMessage('Something')
@@ -33,9 +55,6 @@ class Example(QMainWindow):
         self.setGeometry(100, 200, 300, 400)  # move and resize
         self.setWindowTitle('Hello World')
         self.setWindowIcon(QIcon('blocks.png'))
-
-        # text_edit_widget = QTextEdit()
-        # self.setCentralWidget(text_edit_widget)
 
         button_widget = ButtonWidget(self)
         self.setCentralWidget(button_widget)
@@ -81,6 +100,7 @@ if __name__ == '__main__':
 
     app = QApplication(qt_args)  # QApplication expects the first argument to be the program name
     ex = Example()
+    ex.show()
     exit_code = app.exec_()
     sys.exit(exit_code)
 
